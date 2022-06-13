@@ -21,19 +21,16 @@ def process_ratings(text):
     for line in text:
         arr = line.split(",")
         record = RatingsRecord(arr[2], arr[4][1:], arr[5][0:-1], arr[6])
-
-        # update movie map
+        # update movie map {movieId: movieName}
         if not movie_map.get(record.movieID):
             movie_map[record.movieID] = record.movieName
 
-        # update age_map
+        # update age_map {ageRangeKey: {movieId: (total_rating, total_user)}}
         age_range_key = record.userAge // 5
         rating_map = age_map.get(age_range_key, {})
+        movie_rating = rating_map.get(record.movieID, (0, 0))
 
-        movie_rating = rating_map.get(record.movieID, record.rating)
-        new_rating = (movie_rating + record.rating) / 2
-
-        rating_map[record.movieID] = new_rating
+        rating_map[record.movieID] = (movie_rating[0] + record.rating, movie_rating[1] + 1)
         age_map[age_range_key] = rating_map
     return age_map, movie_map
 
@@ -55,7 +52,8 @@ def recommend(age, num, age_map, movie_map):
 
     tuple_list = []
     for movie_id in rating_map:
-        tuple_list.append((rating_map[movie_id], movie_id))
+        total_rating, total_people = rating_map[movie_id]
+        tuple_list.append((total_rating / total_people, movie_id))
     tuple_list.sort(key=lambda pair: pair[0], reverse=True)
     if len(tuple_list) > num:
         tuple_list = tuple_list[0: num]
