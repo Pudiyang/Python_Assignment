@@ -34,12 +34,17 @@ def process_ratings(text):
         age_map[age_range_key] = rating_map
     return age_map, movie_map
 
+def quote(str):
+    return f'"{str}"'
+
 
 def process_recommend(new_users, age_map, movie_map):
     for i, new_user in enumerate(new_users):
         info = new_user.split(",")
         movie_names = recommend(int(info[1]), int(info[2]), age_map, movie_map)
-        info[3] = ",".join(movie_names) + "\n"
+        movie_names_str = quote(",".join(movie_names))
+        info[3] = movie_names_str + "\n"
+        info[0] = quote(info[0])
         new_users[i] = ",".join(info)
     return new_users
 
@@ -66,6 +71,7 @@ def recommend(age, num, age_map, movie_map):
 
 def output(users_with_recommend):
     with open('newUserOutput.csv', 'w') as f:
+        f.write('UserName,UserAge,NoOfMoviesToRecommend,Movies\n')
         f.writelines(users_with_recommend)
 
 
