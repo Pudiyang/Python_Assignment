@@ -1,15 +1,5 @@
-def read_ratings_input():
-    with open('RatingsInput.csv', 'r') as f:
-        raw = []
-        for i, line in enumerate(f.readlines()):
-            if i == 0:
-                continue
-            raw.append(line)
-        return raw
-
-
-def read_new_user_input():
-    with open('NewUsers.csv', 'r') as f:
+def read_input(file_name):
+    with open(file_name, 'r') as f:
         raw = []
         for i, line in enumerate(f.readlines()):
             if i == 0:
@@ -49,8 +39,8 @@ def process_ratings(text):
 
 
 def process_recommend(new_users, age_map, movie_map):
-    for i, newUser in enumerate(new_users):
-        info = newUser.split(",")
+    for i, new_user in enumerate(new_users):
+        info = new_user.split(",")
         movie_names = recommend(int(info[1]), int(info[2]), age_map, movie_map)
         info[3] = ",".join(movie_names) + "\n"
         new_users[i] = ",".join(info)
@@ -82,8 +72,8 @@ def output(users_with_recommend):
 
 
 if __name__ == '__main__':
-    ratings = read_ratings_input()
-    new_users = read_new_user_input()
+    ratings = read_input('RatingsInput.csv')
+    new_users = read_input('NewUsers.csv')
     age_map, movie_map = process_ratings(ratings)
     users_with_recommend = process_recommend(new_users, age_map, movie_map)
     output(users_with_recommend)
