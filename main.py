@@ -1,6 +1,3 @@
-import heapq
-
-
 def read_ratings_input():
     with open('RatingsInput.csv', 'r') as f:
         raw = []
@@ -62,7 +59,10 @@ def process_recommend(new_users, age_map, movie_map):
 
 def recommend(age, num, age_map, movie_map):
     age_range_key = age // 5
-    rating_map = age_map.get(age_range_key, {})
+    rating_map = age_map.get(age_range_key)
+    if not rating_map:
+        return []
+
     tuple_list = []
     for movie_id in rating_map:
         tuple_list.append((rating_map[movie_id], movie_id))
